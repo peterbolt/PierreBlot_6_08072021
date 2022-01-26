@@ -9,6 +9,10 @@ exports.createSauce = (req, res, next) => {
     imageUrl: `${req.protocol}://${req.get("host")}/images/${
       req.file.filename
     }`,
+    likes: 0,
+    dislikes: 0,
+    usersDisliked: [],
+    usersLiked: [],
   });
   sauce
     .save()
@@ -38,6 +42,7 @@ exports.getOneSauce = (req, res, next) => {
     });
 };
 
+//Rajouter un controle pour empecher modif par un autre User
 exports.modifySauce = (req, res, next) => {
   const sauceObject = req.file
     ? {

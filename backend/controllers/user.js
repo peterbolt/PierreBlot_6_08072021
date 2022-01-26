@@ -1,13 +1,20 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
+const cryptojs = require("crypto-js");
+const dotenv = require("dotenv");
+const result = dotenv.config();
 
 exports.signup = (req, res, next) => {
+  const emailCryptoJS = cryptojs
+    .HmacSHA256(req.body.email, `${process.env.CRYPTOJS_EMAIL}`)
+    .toString();
+
   bcrypt
     .hash(req.body.password, 10)
     .then((hash) => {
       const user = new User({
-        email: req.body.email,
+        email: emailCryptoJS,
         password: hash,
       });
       user
