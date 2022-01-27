@@ -11,8 +11,6 @@ const result = dotenv.config();
 
 const app = express();
 
-const bodyParser = require("body-parser");
-
 mongoose
   .connect(
     `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_CLUSTER}.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`,
@@ -24,7 +22,6 @@ mongoose
 app.use(express.json());
 
 app.use(morgan("dev"));
-app.use(bodyParser.json());
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");

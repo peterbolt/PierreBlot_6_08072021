@@ -42,7 +42,6 @@ exports.getOneSauce = (req, res, next) => {
     });
 };
 
-//Rajouter un controle pour empecher modif par un autre User
 exports.modifySauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => {
