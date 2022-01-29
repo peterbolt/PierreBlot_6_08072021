@@ -1,7 +1,17 @@
 const Sauce = require("../models/Sauce");
 const fs = require("fs");
+const Joi = require("joi");
 
 exports.createSauce = (req, res, next) => {
+  const schema = Joi.object().keys({
+    name: Joi.string().min(3).max(15).required(),
+    manufacturer: Joi.string().min(3).max(20).required(),
+    description: Joi.string().min(5).max(50).required(),
+    mainPepper: Joi.string().min(12).max().required(),
+  });
+  if (schema.validate(req.body).error) {
+    res.send(schema.validate(req.body).error.details);
+  }
   const sauceObject = JSON.parse(req.body.sauce);
   delete sauceObject._id;
   const sauce = new Sauce({
@@ -45,7 +55,7 @@ exports.getOneSauce = (req, res, next) => {
 exports.modifySauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => {
-      if (sauce.userId !== req.auth) {
+      if (sauce.userId !== req.auth.userId) {
         res.status(401).json({ message: "Unauthorized!" });
       }
       const filename = sauce.imageUrl.split("/images/")[1];
@@ -71,7 +81,7 @@ exports.modifySauce = (req, res, next) => {
 exports.deleteSauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => {
-      if (sauce.userId !== req.auth) {
+      if (sauce.userId !== req.auth.userId) {
         res.status(401).json({ message: "Unauthorized!" });
       }
       const filename = sauce.imageUrl.split("/images/")[1];

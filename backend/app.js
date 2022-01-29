@@ -11,6 +11,9 @@ const result = dotenv.config();
 
 const app = express();
 
+const client = require("redis").createClient();
+var limiter = require("express-limiter")(app, client);
+
 mongoose
   .connect(
     `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_CLUSTER}.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`,
@@ -35,12 +38,27 @@ app.use((req, res, next) => {
   );
   next();
 });
-app.use(helmet());
+// app.use(helmet());
+app.use(helmet({ crossOriginResourcePolicy: false }));
 
 app.use("/images", express.static(path.join(__dirname, "images")));
 
 app.use("/api/sauces", saucesRoutes);
 app.use("/api/auth", userRoutes);
+
+// Limite la connexion par adresse IP
+limiter({
+  path: "/api",
+  method: "get",
+  lookup: ["connection.remoteAddress"],
+  // 150 requests per hour
+  total: 150,
+  expire: 1000 * 60 * 60,
+});
+
+app.get("/api", function (req, res) {
+  res.send(200, "ok");
+});
 
 module.exports = app;
 
