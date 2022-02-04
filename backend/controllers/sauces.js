@@ -7,13 +7,12 @@ exports.createSauce = (req, res, next) => {
     name: Joi.string().min(3).max(15).required(),
     manufacturer: Joi.string().min(3).max(20).required(),
     description: Joi.string().min(5).max(50).required(),
-    mainPepper: Joi.string().min(12).max().required(),
+    mainPepper: Joi.string().min(3).max(15).required(),
   });
   if (schema.validate(req.body).error) {
     res.send(schema.validate(req.body).error.details);
   }
   const sauceObject = JSON.parse(req.body.sauce);
-  delete sauceObject._id;
   const sauce = new Sauce({
     ...sauceObject,
     imageUrl: `${req.protocol}://${req.get("host")}/images/${
@@ -58,22 +57,34 @@ exports.modifySauce = (req, res, next) => {
       if (sauce.userId !== req.auth.userId) {
         res.status(401).json({ message: "Unauthorized!" });
       }
+      const saveImageUrl = sauce.imageUrl;
       const filename = sauce.imageUrl.split("/images/")[1];
-      fs.unlink(`images/${filename}`, () => {});
-      const sauceObject = req.file
-        ? {
-            ...JSON.parse(req.body.sauce),
-            imageUrl: `${req.protocol}://${req.get("host")}/images/${
-              req.file.filename
-            }`,
-          }
-        : { ...req.body };
-      Sauce.updateOne(
-        { _id: req.params.id },
-        { ...sauceObject, _id: req.params.id }
-      )
-        .then(() => res.status(200).json({ message: "Objet modifié !" }))
-        .catch((error) => res.status(400).json({ error }));
+      if (req.file) {
+        fs.unlink(`images/${filename}`, () => {});
+        const sauceObject = req.file
+          ? {
+              ...JSON.parse(req.body.sauce),
+              imageUrl: `${req.protocol}://${req.get("host")}/images/${
+                req.file.filename
+              }`,
+            }
+          : { ...req.body };
+        Sauce.updateOne(
+          { _id: req.params.id },
+          { ...sauceObject, _id: req.params.id }
+        )
+          .then(() => res.status(200).json({ message: "Objet modifié !" }))
+          .catch((error) => res.status(400).json({ error }));
+      } else {
+        const newItem = req.body;
+        newItem.imageUrl = saveImageUrl;
+        Sauce.updateOne(
+          { _id: req.params.id },
+          { ...newItem, _id: req.params.id }
+        )
+          .then(() => res.status(200).json({ message: "Objet modifié !" }))
+          .catch((error) => res.status(400).json({ error }));
+      }
     })
     .catch((error) => res.status(500).json({ error }));
 };
