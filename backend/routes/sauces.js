@@ -1,3 +1,4 @@
+// défini les différentes routes de l'API pour les sauces avec les contrôles à appliquer
 const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth");

@@ -1,3 +1,4 @@
+// défini les différentes routes de l'API pour les user avec les contrôles à appliquer
 const express = require("express");
 const router = express.Router();
 

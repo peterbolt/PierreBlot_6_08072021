@@ -1,4 +1,4 @@
-const passwordValidator = require("password-validator");
+const passwordValidator = require("password-validator"); // vérifie le format du MDP
 
 const passwordSchema = new passwordValidator();
 
@@ -18,7 +18,7 @@ passwordSchema
   .spaces() // Should not have spaces
   .is()
   .not()
-  .oneOf(["Passw0rd", "Password123"]); // Blacklist these values
+  .oneOf(["Passw0rd", "Password123", "Azerty123"]); // Blacklist these values
 
 module.exports = (req, res, next) => {
   if (passwordSchema.validate(req.body.password)) {
@@ -26,7 +26,7 @@ module.exports = (req, res, next) => {
   } else {
     return res.status(400).json({
       error:
-        "Invalid password, respect following rules :" +
+        "Mot de passe invalide, respecter les conditions suivantes :" +
         passwordSchema.validate("req.body.password", { list: true }),
     });
   }

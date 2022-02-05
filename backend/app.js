@@ -2,17 +2,17 @@ const express = require("express");
 const mongoose = require("mongoose");
 const userRoutes = require("./routes/user");
 const saucesRoutes = require("./routes/sauces");
-const path = require("path");
-const helmet = require("helmet");
-const morgan = require("morgan");
+const path = require("path"); // permet d'utiliser des fichiers
+const helmet = require("helmet"); //  helps you secure your Express.js apps by setting various HTTP headers
+const morgan = require("morgan"); // génère des logs pour chaque requête
 
 const dotenv = require("dotenv");
 const result = dotenv.config();
 
 const app = express();
 
-const client = require("redis").createClient();
-var limiter = require("express-limiter")(app, client);
+const client = require("redis").createClient(); //Redis is in-memory data structure store, used as a database, cache, and message broker
+var limiter = require("express-limiter")(app, client); // limite le nombre de connexion à l'app
 
 mongoose
   .connect(
@@ -62,4 +62,4 @@ app.get("/api", function (req, res) {
 
 module.exports = app;
 
-mongoose.set("debug", true);
+mongoose.set("debug", true); // affiche les requêtes dans le terminal

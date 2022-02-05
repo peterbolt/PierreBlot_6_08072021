@@ -1,4 +1,4 @@
-const validator = require("validator");
+const validator = require("validator"); // vérifie le format du mail
 
 module.exports = (req, res, next) => {
   const { email } = req.body;

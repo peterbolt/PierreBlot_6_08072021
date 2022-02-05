@@ -1,8 +1,8 @@
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcrypt"); // crypte le mdp user
 const User = require("../models/User");
-const jwt = require("jsonwebtoken");
-const cryptojs = require("crypto-js");
-const dotenv = require("dotenv");
+const jwt = require("jsonwebtoken"); // utilisation des tokens
+const cryptojs = require("crypto-js"); // crypte le mail user
+const dotenv = require("dotenv"); // pour utiliser les variables d'environnement
 const result = dotenv.config();
 
 exports.signup = (req, res, next) => {

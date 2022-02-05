@@ -1,5 +1,5 @@
 const multer = require("multer");
-
+// vérification du format des images ajoutées et modification de leur nom lors de la sauvegarde
 const MIME_TYPES = {
   "image/jpg": "jpg",
   "image/jpeg": "jpg",
